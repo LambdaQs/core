@@ -1,2 +1,2 @@
-# core
-Stable λ-Q# core for experimentation
+# λ-Q# Core Language
+λ-Q# core for experimentation
