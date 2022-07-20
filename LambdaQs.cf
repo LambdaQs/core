@@ -3,10 +3,9 @@ entrypoints Exp;
 -- Metavariables
 MVar. Var ::= Ident;                        -- variables
 MUni. Uni ::= Ident;                        -- unitaries
-MKey. Key ::= Ident;                        -- qubit symbols/unique keys
 
 -- Types
-TQref. Typ ::= "qref" "[" Key "]";          -- qubit reference
+TQref. Typ ::= "qref";                      -- qubit reference
 TParr. Typ ::= Typ "->" Typ;                -- partial function
 TCmd.  Typ ::= "cmd" "(" Typ ")";           -- command
 TProd. Typ ::= Typ "*" Typ;
@@ -22,7 +21,6 @@ ELet.  Exp ::= "let" Var "be" Exp "in" Exp;   -- let expression
 ELam.  Exp ::= "\\" "(" Var ":" Typ ")" Exp;  -- lambda abstraction
 EAp.   Exp ::= Exp "(" Exp ")";               -- application
 ECmd.  Exp ::= "cmd" Cmd;                     -- encapsulation
-EQloc. Exp ::= "&" Key;                       -- qubit locations
 ETpl.  Exp ::= "(" Exp "," Exp ")";
 EProj. Exp ::= Exp "." Integer;               -- currently just 1 or 2 as these are pairs
 ETrue. Exp ::= "true";
