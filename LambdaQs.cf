@@ -9,11 +9,8 @@ TQref. Typ ::= "qref";                      -- qubit reference
 TParr. Typ ::= Typ "->" Typ;                -- partial function
 TCmd.  Typ ::= "cmd" "(" Typ ")";           -- command
 TProd. Typ ::= Typ "*" Typ;
--- TSum.  Typ ::= "sum" "(" Typ "," Typ ")";
 TBool. Typ ::= "bool";
 TUnit. Typ ::= "unit";
--- TQbit. Typ ::= "qbit";                      -- opaque qubit type
--- TNat.  Typ ::= "nat";
 
 -- Expressions
 EVar.  Exp ::= Var;
@@ -28,8 +25,7 @@ EFls.  Exp ::= "false";
 EIte.  Exp ::= "if" Exp "then" Exp "else" Exp;
 ENot.  Exp ::= "not" Exp;
 ETriv. Exp ::= "()";
--- ENat.  Exp ::= Integer;
--- EPlus. Exp ::= Exp "+" Exp;
+ERef.  Exp ::= Exp "requires" Ref "ensures" Ref;
 
 -- Commands
 CRet.   Cmd ::= "ret" Exp;                                -- return
@@ -38,10 +34,14 @@ CNew.   Cmd ::= "new" Var "in" Cmd;                       -- new qubit reference
 CGap.   Cmd ::= Uni "(" Exp ")";                          -- unitary gate application
 CDiag.  Cmd ::= "D" "(" Uni "," Uni ";" Exp "," Exp ")";  -- diagonal gate application
 CMeas.  Cmd ::= "meas" "(" Exp ")";                       -- measurement
--- CDcl.   Cmd ::= "dcl" Key "in" Cmd;                    -- qubit symbol creation
--- CCap.   Cmd ::= "Controlled" Uni "(" Exp "," Exp ")";
--- CGet.   Cmd ::= "get" "[" Key "]";
--- CSet.   Cmd ::= "set" "[" Key "]" "(" Exp ")";
+
+-- Refinements
+RTop. Ref ::= "top";
+RBot. Ref ::= "bot";
+REq.  Ref ::= Var "=" Integer;
+RAnd. Ref ::= Ref "/\\" Ref;
+ROr.  Ref ::= Ref "\\/" Ref;
+RUni. Ref ::= Uni "o" Ref;      -- unitary applied to a subspace
 
 -- Programming idioms
 
@@ -67,16 +67,24 @@ define pcall e1 e2 x = ECmd (CBnd x (EAp e1 e2) (CRet (EVar x)));;
 internal EVarT. Exp ::= "(" Var ":" Typ ")";
 
 {-
+# Examples
 
-  # Build and run using:
+## QAlgol Example 3.1
 
-      ```
-      ## for Haskell
-      bnfc -d -m LambdaQs.cf  &&  make
-      ./LambdaQs/Test
+cmd new q1 in
+ret let q2 be q1 in
+cmd D(I, X; q1, q2)
 
-      ## for OCaml with Menhir
-      bnfc -m --ocaml-menhir LambdaQs.cf  &&  make
-      ./TestLambdaQs
-      ```
+## QAlgol Example 3.2
+
+let newQbit be proc(dummy:unit)
+  new x in ret x
+in ()
+
+## WIP example with specification
+
+bell00((a,b))
+requires a=0 /\ b=0
+ensures c=0
+
 -}
